@@ -9,29 +9,34 @@ module.exports = async (srv) => {
             return req.error(400, 'Folder name is required');
         }
 
-        // Get SDM service binding credentials
-        const sdm = await cds.connect.to('dms-integration');
+        try {
+            // Get SDM service binding credentials
+            const sdm = await cds.connect.to('dms-integration');
 
-        // Create folder in SAP Document Management via CMIS Browser Binding
-        const response = await sdm.send({
-            method: 'POST',
-            path: '/browser/root',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            data: new URLSearchParams({
-                'cmisaction': 'createFolder',
-                'propertyId[0]': 'cmis:name',
-                'propertyValue[0]': folderName,
-                'propertyId[1]': 'cmis:objectTypeId',
-                'propertyValue[1]': 'cmis:folder'
-            }).toString()
-        });
+            // Create folder in SAP Document Management via CMIS Browser Binding
+            const response = await sdm.send({
+                method: 'POST',
+                path: '/browser/root',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                data: new URLSearchParams({
+                    'cmisaction': 'createFolder',
+                    'propertyId[0]': 'cmis:name',
+                    'propertyValue[0]': folderName,
+                    'propertyId[1]': 'cmis:objectTypeId',
+                    'propertyValue[1]': 'cmis:folder'
+                }).toString()
+            });
 
-        const cmisId = response.succinctProperties?.['cmis:objectId'];
+            const cmisId = response.succinctProperties?.['cmis:objectId'];
 
-        // Log folder metadata
-        console.log('Folder created:', { folderName, cmisId, response });
+            // Log folder metadata
+            console.log('Folder created:', { folderName, cmisId, response });
 
-        return { folderName, cmisId };
+            return { folderName, cmisId };
+        } catch (err) {
+            console.error('Error creating folder:', err.message || err);
+            return req.error(500, `Failed to create folder: ${err.message || 'Unknown error'}`);
+        }
     });
 
     srv.on('deleteFolder', async (req) => {
@@ -41,23 +46,28 @@ module.exports = async (srv) => {
             return req.error(400, 'cmisId is required');
         }
 
-        // Get SDM service binding credentials
-        const sdm = await cds.connect.to('dms-integration');
+        try {
+            // Get SDM service binding credentials
+            const sdm = await cds.connect.to('dms-integration');
 
-        // Delete folder in SAP Document Management via CMIS Browser Binding
-        const response = await sdm.send({
-            method: 'POST',
-            path: '/browser/root',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            data: new URLSearchParams({
-                'cmisaction': 'delete',
-                'objectId': cmisId,
-                'allVersions': 'true'
-            }).toString()
-        });
+            // Delete folder in SAP Document Management via CMIS Browser Binding
+            const response = await sdm.send({
+                method: 'POST',
+                path: '/browser/root',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                data: new URLSearchParams({
+                    'cmisaction': 'delete',
+                    'objectId': cmisId,
+                    'allVersions': 'true'
+                }).toString()
+            });
 
-        console.log('Folder deleted:', { cmisId, response });
+            console.log('Folder deleted:', { cmisId, response });
 
-        return `Folder with cmisId '${cmisId}' deleted successfully`;
+            return `Folder with cmisId '${cmisId}' deleted successfully`;
+        } catch (err) {
+            console.error('Error deleting folder:', err.message || err);
+            return req.error(500, `Failed to delete folder: ${err.message || 'Unknown error'}`);
+        }
     });
 };
