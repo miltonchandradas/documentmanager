@@ -1,0 +1,59 @@
+_schema-version: "3.1"
+ID: documentmanager
+version: 1.0.0
+description: Document Manager CAP Application
+
+parameters:
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+
+modules:
+  - name: documentmanager-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: documentmanager-db
+      - name: documentmanager-auth
+      - name: dms-integration
+
+  - name: documentmanager-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: documentmanager-db
+
+resources:
+  - name: documentmanager-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+  - name: documentmanager-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+
+  - name: dms-integration
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: dms-integration

@@ -4,6 +4,7 @@
   "description": "A simple CAP project.",
   "dependencies": {
     "@sap/cds": "^9",
+    "@cap-js/hana": "^1",
     "express": "^4"
   },
   "devDependencies": {
