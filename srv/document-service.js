@@ -114,6 +114,3 @@ module.exports = async (srv) => {
         }
     });
 };
-        }
-    });
-};
