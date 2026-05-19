@@ -1,0 +1,7 @@
+### Create a folder in Document Manager
+POST http://localhost:4004/odata/v4/document/createFolder
+Content-Type: application/json
+
+{
+  "folderName": "MyNewFolder"
+}

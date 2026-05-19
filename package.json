@@ -12,5 +12,12 @@
   "scripts": {
     "start": "cds-serve"
   },
+  "cds": {
+    "requires": {
+      "dms-integration": {
+        "kind": "rest"
+      }
+    }
+  },
   "private": true
 }

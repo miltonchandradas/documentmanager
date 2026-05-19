@@ -1,0 +1,2 @@
+cf login -a https://api.cf.us21.hana.ondemand.com
+cds bind -2 dms-integration
