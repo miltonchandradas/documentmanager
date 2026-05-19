@@ -27,32 +27,9 @@ modules:
         properties:
           srv-url: ${default-url}
     requires:
-      - name: documentmanager-db
-      - name: documentmanager-auth
       - name: dms-integration
 
-  - name: documentmanager-db-deployer
-    type: hdb
-    path: gen/db
-    parameters:
-      buildpack: nodejs_buildpack
-    requires:
-      - name: documentmanager-db
-
 resources:
-  - name: documentmanager-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
-
-  - name: documentmanager-auth
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: xsuaa
-      service-plan: application
-      path: ./xs-security.json
-
   - name: dms-integration
     type: org.cloudfoundry.existing-service
     parameters:

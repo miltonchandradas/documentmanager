@@ -5,3 +5,11 @@ Content-Type: application/json
 {
   "folderName": "MyNewFolder"
 }
+
+### Delete a folder in Document Manager
+POST http://localhost:4004/odata/v4/document/deleteFolder
+Content-Type: application/json
+
+{
+  "cmisId": "<paste-cmisId-here>"
+}
