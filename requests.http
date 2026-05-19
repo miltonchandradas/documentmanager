@@ -6,6 +6,15 @@ Content-Type: application/json
   "folderName": "MyNewFolder"
 }
 
+### Onboard a repository in Document Manager
+POST http://localhost:4004/odata/v4/document/onboardRepository
+Content-Type: application/json
+
+{
+  "repoName": "ABAPCodeReviewRepository",
+  "repoDescription": "Internal document repository"
+}
+
 ### Delete a folder in Document Manager
 POST http://localhost:4004/odata/v4/document/deleteFolder
 Content-Type: application/json

@@ -26,6 +26,26 @@ async function getOAuthToken(credentials) {
     return data.access_token;
 }
 
+async function getRepositoryId(baseUrl, token) {
+    const url = `${baseUrl}/browser`;
+    console.log('Fetching repositories from:', url);
+    const response = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to get repositories: ${response.status} ${await response.text()}`);
+    }
+    const repos = await response.json();
+    console.log('Repositories response:', JSON.stringify(repos));
+    // Get the first repository ID
+    const repoIds = Object.keys(repos);
+    if (repoIds.length === 0) {
+        throw new Error('No repositories found in Document Management Service. Please onboard a repository via the SDM admin UI.');
+    }
+    console.log('Available repositories:', repoIds);
+    return repoIds[0];
+}
+
 module.exports = async (srv) => {
 
     srv.on('createFolder', async (req) => {
@@ -37,11 +57,16 @@ module.exports = async (srv) => {
 
         try {
             const credentials = getSDMCredentials();
+            console.log('SDM credentials keys:', Object.keys(credentials));
+            console.log('SDM endpoints:', JSON.stringify(credentials.endpoints));
+            console.log('SDM uri:', credentials.uri);
             const token = await getOAuthToken(credentials);
-            const baseUrl = credentials.endpoints?.ecmservice?.url || credentials.uri;
+            const baseUrl = (credentials.endpoints?.ecmservice?.url || credentials.uri).replace(/\/+$/, '');
+            console.log('Using base URL:', baseUrl);
+            const repoId = await getRepositoryId(baseUrl, token);
 
             // Create folder in SAP Document Management via CMIS Browser Binding
-            const response = await fetch(`${baseUrl}/browser/root`, {
+            const response = await fetch(`${baseUrl}/browser/${repoId}/root`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -84,10 +109,11 @@ module.exports = async (srv) => {
         try {
             const credentials = getSDMCredentials();
             const token = await getOAuthToken(credentials);
-            const baseUrl = credentials.endpoints?.ecmservice?.url || credentials.uri;
+            const baseUrl = (credentials.endpoints?.ecmservice?.url || credentials.uri).replace(/\/+$/, '');
+            const repoId = await getRepositoryId(baseUrl, token);
 
             // Delete folder in SAP Document Management via CMIS Browser Binding
-            const response = await fetch(`${baseUrl}/browser/root`, {
+            const response = await fetch(`${baseUrl}/browser/${repoId}/root`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -111,6 +137,54 @@ module.exports = async (srv) => {
         } catch (err) {
             console.error('Error deleting folder:', err.message || err);
             return req.error(500, `Failed to delete folder: ${err.message || 'Unknown error'}`);
+        }
+    });
+
+    srv.on('onboardRepository', async (req) => {
+        const { repoName, repoDescription } = req.data;
+
+        if (!repoName) {
+            return req.error(400, 'Repository name is required');
+        }
+
+        try {
+            const credentials = getSDMCredentials();
+            const token = await getOAuthToken(credentials);
+            const baseUrl = (credentials.endpoints?.ecmservice?.url || credentials.uri).replace(/\/+$/, '');
+
+            const response = await fetch(`${baseUrl}/rest/v2/repositories`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    repository: {
+                        displayName: repoName,
+                        description: repoDescription || repoName,
+                        repositoryType: 'internal',
+                        isVirusScanEnabled: true,
+                        skipVirusScanForLargeFile: false,
+                        hashAlgorithms: 'SHA-256',
+                        isVersionEnabled: true,
+                        isThumbnailEnabled: false,
+                        isEncryptionEnabled: false
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`SDM API error ${response.status}: ${errText}`);
+            }
+
+            const result = await response.json();
+            console.log('Repository onboarded:', JSON.stringify(result));
+
+            return `Repository '${repoName}' onboarded successfully`;
+        } catch (err) {
+            console.error('Error onboarding repository:', err.message || err);
+            return req.error(500, `Failed to onboard repository: ${err.message || 'Unknown error'}`);
         }
     });
 };
