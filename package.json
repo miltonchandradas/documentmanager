@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "A simple CAP project.",
   "dependencies": {
-    "@sap-cloud-sdk/connectivity": "^3",
-    "@sap-cloud-sdk/http-client": "^3",
-    "@sap-cloud-sdk/resilience": "^3",
     "@sap/cds": "^9",
     "express": "^4"
   },
@@ -18,9 +15,6 @@
   },
   "cds": {
     "requires": {
-      "dms-integration": {
-        "kind": "rest"
-      },
       "auth": {
         "kind": "dummy"
       }
