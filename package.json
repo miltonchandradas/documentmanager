@@ -18,6 +18,9 @@
     "requires": {
       "dms-integration": {
         "kind": "rest"
+      },
+      "auth": {
+        "kind": "dummy"
       }
     }
   },
