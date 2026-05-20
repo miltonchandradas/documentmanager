@@ -3,8 +3,31 @@ POST http://localhost:4004/odata/v4/document/createFolder
 Content-Type: application/json
 
 {
+  "repositoryId": "9d0f2204-45e9-4a99-b2a1-134e1b8a0106",
   "folderName": "MyNewFolder"
 }
+
+### List folders in a repository
+POST http://localhost:4004/odata/v4/document/listFolders
+Content-Type: application/json
+
+{
+  "repositoryId": "9d0f2204-45e9-4a99-b2a1-134e1b8a0106"
+}
+
+### Delete a folder in Document Manager
+POST http://localhost:4004/odata/v4/document/deleteFolder
+Content-Type: application/json
+
+{
+  "cmisId": "<paste-cmisId-here>"
+}
+
+### List all repositories
+POST http://localhost:4004/odata/v4/document/listRepositories
+Content-Type: application/json
+
+{}
 
 ### Onboard a repository in Document Manager
 POST http://localhost:4004/odata/v4/document/onboardRepository
@@ -15,10 +38,12 @@ Content-Type: application/json
   "repoDescription": "Internal document repository"
 }
 
-### Delete a folder in Document Manager
-POST http://localhost:4004/odata/v4/document/deleteFolder
+### Delete a repository in Document Manager
+POST http://localhost:4004/odata/v4/document/deleteRepository
 Content-Type: application/json
 
 {
-  "cmisId": "<paste-cmisId-here>"
+  "repositoryId": "1c73ab7e-2187-4cf9-ad37-ca9a2222fdfb"
 }
+
+

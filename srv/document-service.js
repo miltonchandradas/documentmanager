@@ -48,25 +48,55 @@ async function getRepositoryId(baseUrl, token) {
 
 module.exports = async (srv) => {
 
-    srv.on('createFolder', async (req) => {
-        const { folderName } = req.data;
+    srv.on('listRepositories', async (req) => {
+        try {
+            const credentials = getSDMCredentials();
+            const token = await getOAuthToken(credentials);
+            const baseUrl = (credentials.endpoints?.ecmservice?.url || credentials.uri).replace(/\/+$/, '');
 
+            const response = await fetch(`${baseUrl}/browser`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`SDM API error ${response.status}: ${errText}`);
+            }
+
+            const repos = await response.json();
+            const repositories = Object.entries(repos).map(([id, details]) => ({
+                repositoryId: id,
+                name: details.repositoryName || details.productName,
+                description: details.repositoryDescription || '',
+                rootFolderId: details.rootFolderId
+            }));
+
+            console.log('Repositories:', JSON.stringify(repositories, null, 2));
+
+            return JSON.stringify(repositories);
+        } catch (err) {
+            console.error('Error listing repositories:', err.message || err);
+            return req.error(500, `Failed to list repositories: ${err.message || 'Unknown error'}`);
+        }
+    });
+
+    srv.on('createFolder', async (req) => {
+        const { repositoryId, folderName } = req.data;
+
+        if (!repositoryId) {
+            return req.error(400, 'Repository ID is required');
+        }
         if (!folderName) {
             return req.error(400, 'Folder name is required');
         }
 
         try {
             const credentials = getSDMCredentials();
-            console.log('SDM credentials keys:', Object.keys(credentials));
-            console.log('SDM endpoints:', JSON.stringify(credentials.endpoints));
-            console.log('SDM uri:', credentials.uri);
             const token = await getOAuthToken(credentials);
             const baseUrl = (credentials.endpoints?.ecmservice?.url || credentials.uri).replace(/\/+$/, '');
-            console.log('Using base URL:', baseUrl);
-            const repoId = await getRepositoryId(baseUrl, token);
 
             // Create folder in SAP Document Management via CMIS Browser Binding
-            const response = await fetch(`${baseUrl}/browser/${repoId}/root`, {
+            const response = await fetch(`${baseUrl}/browser/${repositoryId}/root`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -87,7 +117,8 @@ module.exports = async (srv) => {
             }
 
             const result = await response.json();
-            const cmisId = result.succinctProperties?.['cmis:objectId'];
+            const cmisId = result.succinctProperties?.['cmis:objectId']
+                || result.properties?.['cmis:objectId']?.value;
 
             // Log folder metadata
             console.log('Folder created:', { folderName, cmisId, result });
@@ -185,6 +216,84 @@ module.exports = async (srv) => {
         } catch (err) {
             console.error('Error onboarding repository:', err.message || err);
             return req.error(500, `Failed to onboard repository: ${err.message || 'Unknown error'}`);
+        }
+    });
+
+    srv.on('deleteRepository', async (req) => {
+        const { repositoryId } = req.data;
+
+        if (!repositoryId) {
+            return req.error(400, 'Repository ID is required');
+        }
+
+        try {
+            const credentials = getSDMCredentials();
+            const token = await getOAuthToken(credentials);
+            const baseUrl = (credentials.endpoints?.ecmservice?.url || credentials.uri).replace(/\/+$/, '');
+
+            const response = await fetch(`${baseUrl}/rest/v2/repositories/${repositoryId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`SDM API error ${response.status}: ${errText}`);
+            }
+
+            console.log('Repository deleted:', { repositoryId });
+
+            return `Repository '${repositoryId}' deleted successfully`;
+        } catch (err) {
+            console.error('Error deleting repository:', err.message || err);
+            return req.error(500, `Failed to delete repository: ${err.message || 'Unknown error'}`);
+        }
+    });
+
+    srv.on('listFolders', async (req) => {
+        const { repositoryId } = req.data;
+
+        if (!repositoryId) {
+            return req.error(400, 'Repository ID is required');
+        }
+
+        try {
+            const credentials = getSDMCredentials();
+            const token = await getOAuthToken(credentials);
+            const baseUrl = (credentials.endpoints?.ecmservice?.url || credentials.uri).replace(/\/+$/, '');
+
+            // Get children of root folder
+            const response = await fetch(`${baseUrl}/browser/${repositoryId}/root?cmisselector=children`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`SDM API error ${response.status}: ${errText}`);
+            }
+
+            const result = await response.json();
+            const folders = (result.objects || []).map(obj => {
+                const props = obj.object?.properties || {};
+                return {
+                    cmisId: props['cmis:objectId']?.value,
+                    name: props['cmis:name']?.value,
+                    type: props['cmis:baseTypeId']?.value,
+                    createdBy: props['cmis:createdBy']?.value,
+                    createdAt: props['cmis:creationDate']?.value
+                };
+            });
+
+            console.log('Folders in repository:', JSON.stringify(folders, null, 2));
+
+            return JSON.stringify(folders);
+        } catch (err) {
+            console.error('Error listing folders:', err.message || err);
+            return req.error(500, `Failed to list folders: ${err.message || 'Unknown error'}`);
         }
     });
 };
