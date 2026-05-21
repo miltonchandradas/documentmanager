@@ -310,7 +310,7 @@ module.exports = async (srv) => {
         const axios = require('axios');
 
         const DEST = { destinationName: 'CALM_API' };
-        const SERVICE_PATH = '/ui/imp-sd-docu-srv/v1/odata/v4/DocumentService';
+        const SERVICE_PATH = '/api/calm-documents/v1/Documents';
 
         try {
             // Resolve destination and extract token for fallback
@@ -423,6 +423,52 @@ module.exports = async (srv) => {
             console.error('Error creating Cloud ALM document:', err.message || err);
             const detail = err.response?.data || err.message || 'Unknown error';
             return req.error(500, `Failed to create Cloud ALM document: ${JSON.stringify(detail)}`);
+        }
+    });
+
+    // ─── Cloud ALM Metadata Retrieval ─────────────────────────────────────────────
+
+    srv.on('getCloudALMMetadata', async (req) => {
+        const { getDestination } = require('@sap-cloud-sdk/connectivity');
+        const axios = require('axios');
+
+        const SERVICE_PATH = '/api/calm-documents/v1';
+
+        try {
+            const resolved = await getDestination({ destinationName: 'CALM_API' });
+            const baseUrl = resolved.url;
+            const token = resolved?.authTokens?.find(t => t.value)?.value;
+            if (!token) {
+                throw new Error('No auth token obtained from destination.');
+            }
+
+            const scopes = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).scope;
+            console.log('Cloud ALM: Token scopes:', scopes);
+
+            // Probe multiple sub-paths
+            const paths = [
+                '/api/calm-documents/v1',
+                '/api/calm-documents/v1/Documents',
+                '/api/calm-documents/v1/Documents/$metadata',
+                '/api/calm-documents/v1/$metadata'
+            ];
+
+            console.log('Cloud ALM: Probing document API paths...');
+            for (const p of paths) {
+                const r = await axios.get(`${baseUrl}${p}`, {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    validateStatus: () => true
+                });
+                console.log(`  ${p} => ${r.status} ${r.headers['www-authenticate'] || ''}`);
+                if (r.status === 200) {
+                    console.log('  Response (first 500 chars):', JSON.stringify(r.data).substring(0, 500));
+                }
+            }
+
+            return 'Path probing complete - check server logs';
+        } catch (err) {
+            console.error('Error fetching Cloud ALM metadata:', err.message);
+            return req.error(500, err.message);
         }
     });
 };

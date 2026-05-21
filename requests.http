@@ -57,4 +57,14 @@ Content-Type: application/json
   "statusCode": "30"
 }
 
+### Create a document in SAP Cloud ALM (via CALM_API destination)
+GET http://localhost:4004/odata/v4/document/$metadata
+
+### Get Cloud ALM Document Service $metadata
+POST http://localhost:4004/odata/v4/document/getCloudALMMetadata
+Content-Type: application/json
+
+{}
+
+
 
