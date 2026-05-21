@@ -46,4 +46,15 @@ Content-Type: application/json
   "repositoryId": "1c73ab7e-2187-4cf9-ad37-ca9a2222fdfb"
 }
 
+### Create a document in SAP Cloud ALM (via CALM_API destination)
+POST http://localhost:4004/odata/v4/document/createCloudALMDocument
+Content-Type: application/json
+
+{
+  "projectUUID": "11111111-1111-1111-1111-111111111111",
+  "title": "My CAP Uploaded Document",
+  "documentTypeCode": "FU",
+  "statusCode": "30"
+}
+
 

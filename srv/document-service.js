@@ -296,4 +296,133 @@ module.exports = async (srv) => {
             return req.error(500, `Failed to list folders: ${err.message || 'Unknown error'}`);
         }
     });
+
+    // ─── Cloud ALM Document Creation via BTP Destination ─────────────────────────
+
+    srv.on('createCloudALMDocument', async (req) => {
+        const { projectUUID, title, documentTypeCode, statusCode } = req.data;
+
+        if (!projectUUID) return req.error(400, 'projectUUID is required');
+        if (!title) return req.error(400, 'title is required');
+
+        const { executeHttpRequest } = require('@sap-cloud-sdk/http-client');
+        const { getDestination } = require('@sap-cloud-sdk/connectivity');
+        const axios = require('axios');
+
+        const DEST = { destinationName: 'CALM_API' };
+        const SERVICE_PATH = '/ui/imp-sd-docu-srv/v1/odata/v4/DocumentService';
+
+        try {
+            // Resolve destination and extract token for fallback
+            const resolved = await getDestination({ destinationName: 'CALM_API' });
+            const baseUrl = resolved.url;
+            const token = resolved?.authTokens?.find(t => t.value)?.value;
+            if (!token) {
+                throw new Error('No auth token obtained from destination. Check CALM_API destination credentials.');
+            }
+            console.log('Cloud ALM: Token obtained, scopes:', JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).scope);
+
+            // Step 1: Fetch CSRF token (try SDK first, fallback to axios)
+            console.log('Cloud ALM: Fetching CSRF token...');
+            let csrfToken;
+            let cookies;
+            try {
+                const csrfResponse = await executeHttpRequest(DEST, {
+                    method: 'get',
+                    url: SERVICE_PATH,
+                    headers: { 'x-csrf-token': 'fetch' }
+                });
+                csrfToken = csrfResponse.headers['x-csrf-token'];
+                cookies = csrfResponse.headers['set-cookie'];
+                console.log('Cloud ALM: CSRF token obtained via SDK');
+            } catch (sdkErr) {
+                console.log('Cloud ALM: SDK failed (' + (sdkErr.response?.status || sdkErr.message) + '), trying axios fallback...');
+                const csrfResponse = await axios.get(`${baseUrl}${SERVICE_PATH}`, {
+                    headers: {
+                        'x-csrf-token': 'fetch',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                csrfToken = csrfResponse.headers['x-csrf-token'];
+                cookies = csrfResponse.headers['set-cookie'];
+                console.log('Cloud ALM: CSRF token obtained via axios fallback');
+            }
+
+            if (!csrfToken) {
+                throw new Error('No x-csrf-token header in response');
+            }
+
+            // Helper: try SDK first, fallback to axios
+            const calmRequest = async (method, path, data) => {
+                try {
+                    return await executeHttpRequest(DEST, {
+                        method,
+                        url: `${SERVICE_PATH}${path}`,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-csrf-token': csrfToken
+                        },
+                        data
+                    }, { fetchCsrfToken: false });
+                } catch (sdkErr) {
+                    console.log(`Cloud ALM: SDK failed for ${method.toUpperCase()} ${path}, using axios fallback`);
+                    return axios({
+                        method,
+                        url: `${baseUrl}${SERVICE_PATH}${path}`,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-csrf-token': csrfToken,
+                            'Authorization': `Bearer ${token}`,
+                            ...(cookies ? { 'Cookie': cookies.join('; ') } : {})
+                        },
+                        data
+                    });
+                }
+            };
+
+            // Step 2: Create document draft
+            console.log('Cloud ALM: Creating document draft...');
+            const createResponse = await calmRequest('post', '/Documents', {
+                projectUUID: projectUUID,
+                isTemplate: false,
+                iconUrl: 'sap-icon://document'
+            });
+
+            const draft = createResponse.data;
+            const documentUUID = draft.uuid;
+            console.log('Cloud ALM: Draft created, uuid:', documentUUID);
+
+            // Step 3: Patch required metadata
+            const patchBody = { title };
+            if (documentTypeCode) patchBody.documentType_code = documentTypeCode;
+            if (statusCode) patchBody.status_code = statusCode;
+
+            console.log('Cloud ALM: Patching document metadata...');
+            await calmRequest('patch', `/Documents(uuid=${documentUUID},IsActiveEntity=false)`, patchBody);
+            console.log('Cloud ALM: Metadata patched');
+
+            // Step 4: draftPrepare
+            console.log('Cloud ALM: Preparing draft...');
+            await calmRequest('post', `/Documents(uuid=${documentUUID},IsActiveEntity=false)/DocumentService.draftPrepare`, { SideEffectsQualifier: '' });
+            console.log('Cloud ALM: Draft prepared');
+
+            // Step 5: draftActivate
+            console.log('Cloud ALM: Activating draft...');
+            const activateResponse = await calmRequest('post', `/Documents(uuid=${documentUUID},IsActiveEntity=false)/DocumentService.draftActivate`, {});
+            console.log('Cloud ALM: Document activated');
+
+            const result = {
+                uuid: documentUUID,
+                title: title,
+                IsActiveEntity: true,
+                activateResponse: activateResponse.data
+            };
+
+            return JSON.stringify(result);
+        } catch (err) {
+            console.error('Error creating Cloud ALM document:', err.message || err);
+            const detail = err.response?.data || err.message || 'Unknown error';
+            return req.error(500, `Failed to create Cloud ALM document: ${JSON.stringify(detail)}`);
+        }
+    });
 };

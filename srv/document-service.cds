@@ -10,4 +10,7 @@ service DocumentService {
     action createFolder(repositoryId: String, folderName: String)                             returns Folders;
     action listFolders(repositoryId: String)                                                  returns String;
     action deleteFolder(cmisId: String)                                                       returns String;
+
+    // Cloud ALM Document creation via BTP destination
+    action createCloudALMDocument(projectUUID: String, title: String, documentTypeCode: String, statusCode: String) returns String;
 }

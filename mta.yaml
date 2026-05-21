@@ -28,9 +28,23 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: dms-integration
+      - name: documentmanager-destination
+      - name: documentmanager-connectivity
 
 resources:
   - name: dms-integration
     type: org.cloudfoundry.existing-service
     parameters:
       service-name: dms-integration
+
+  - name: documentmanager-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+
+  - name: documentmanager-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
