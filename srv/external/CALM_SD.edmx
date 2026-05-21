@@ -1,0 +1,1740 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Authorization.V1.xml">
+    <edmx:Include Alias="Authorization" Namespace="Org.OData.Authorization.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+    <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/PersonalData.xml">
+    <edmx:Include Alias="PersonalData" Namespace="com.sap.vocabularies.PersonalData.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+    <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
+    <edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="api.v1.DocumentAPI" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Annotation Term="Core.Links">
+        <Collection>
+          <Record>
+            <PropertyValue Property="rel" String="author"/>
+            <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+          </Record>
+        </Collection>
+      </Annotation>
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="Documents" EntityType="api.v1.DocumentAPI.Documents">
+          <NavigationPropertyBinding Path="toStatus" Target="DocumentStatus"/>
+          <NavigationPropertyBinding Path="toPriority" Target="DocumentPriorities"/>
+          <NavigationPropertyBinding Path="toSource" Target="DocumentSources"/>
+          <NavigationPropertyBinding Path="toDocumentType" Target="DocumentTypes"/>
+          <NavigationPropertyBinding Path="toURLReferences" Target="URLReferences"/>
+          <NavigationPropertyBinding Path="toSolutionProcessAssignments" Target="SolutionProcessAssignments"/>
+          <NavigationPropertyBinding Path="toProcessHierarchyAssignments" Target="ProcessHierarchyAssignments"/>
+          <NavigationPropertyBinding Path="toTaskAssignments" Target="TaskAssignments"/>
+          <NavigationPropertyBinding Path="toLibraryAssignments" Target="LibraryAssignments"/>
+          <NavigationPropertyBinding Path="toTestCaseAssignments" Target="TestCaseAssignments"/>
+          <NavigationPropertyBinding Path="toExternalFiles" Target="ExternalFiles"/>
+          <NavigationPropertyBinding Path="toExternalReferences" Target="ExternalReferences"/>
+          <NavigationPropertyBinding Path="toState" Target="DocumentStates"/>
+          <NavigationPropertyBinding Path="toApproval" Target="DocumentApprovalStates"/>
+        </EntitySet>
+        <EntitySet Name="URLReferences" EntityType="api.v1.DocumentAPI.URLReferences">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <EntitySet Name="SolutionProcessAssignments" EntityType="api.v1.DocumentAPI.SolutionProcessAssignments">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <EntitySet Name="ProcessHierarchyAssignments" EntityType="api.v1.DocumentAPI.ProcessHierarchyAssignments">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <EntitySet Name="TaskAssignments" EntityType="api.v1.DocumentAPI.TaskAssignments">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <EntitySet Name="LibraryAssignments" EntityType="api.v1.DocumentAPI.LibraryAssignments">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <EntitySet Name="TestCaseAssignments" EntityType="api.v1.DocumentAPI.TestCaseAssignments">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <EntitySet Name="DocumentStatus" EntityType="api.v1.DocumentAPI.DocumentStatus"/>
+        <EntitySet Name="DocumentPriorities" EntityType="api.v1.DocumentAPI.DocumentPriorities"/>
+        <EntitySet Name="DocumentTypes" EntityType="api.v1.DocumentAPI.DocumentTypes"/>
+        <EntitySet Name="DocumentSources" EntityType="api.v1.DocumentAPI.DocumentSources"/>
+        <EntitySet Name="ExternalFiles" EntityType="api.v1.DocumentAPI.ExternalFiles">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <Singleton Name="DmsConfig" Type="api.v1.DocumentAPI.DmsConfig"/>
+        <EntitySet Name="ExternalReferences" EntityType="api.v1.DocumentAPI.ExternalReferences">
+          <NavigationPropertyBinding Path="parent" Target="Documents"/>
+        </EntitySet>
+        <EntitySet Name="DocumentApprovalStates" EntityType="api.v1.DocumentAPI.DocumentApprovalStates"/>
+        <EntitySet Name="DocumentStates" EntityType="api.v1.DocumentAPI.DocumentStates"/>
+        <ActionImport Name="updateTags" Action="api.v1.DocumentAPI.updateTags"/>
+      </EntityContainer>
+      <EntityType Name="Documents">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="displayId" Type="Edm.String" MaxLength="40"/>
+        <Property Name="title" Type="Edm.String" MaxLength="255"/>
+        <Property Name="content" Type="Edm.String"/>
+        <Property Name="projectId" Type="Edm.Guid"/>
+        <Property Name="scopeId" Type="Edm.Guid"/>
+        <Property Name="statusCode" Type="Edm.Int32" DefaultValue="10"/>
+        <Property Name="priorityCode" Type="Edm.Int32" DefaultValue="30"/>
+        <Property Name="sourceCode" Type="Edm.String" MaxLength="10" DefaultValue="MANUAL"/>
+        <Property Name="documentTypeCode" Type="Edm.String" MaxLength="40" DefaultValue="NA"/>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="tags" Type="Collection(Edm.String)" Nullable="true"/>
+        <Property Name="isTemplate" Type="Edm.Boolean" DefaultValue="false"/>
+        <Property Name="ownerId" Type="Edm.String" MaxLength="255"/>
+        <Property Name="responsibleId" Type="Edm.String" MaxLength="255"/>
+        <Property Name="stateCode" Type="Edm.String" MaxLength="10" DefaultValue="ACT"/>
+        <Property Name="approvalCode" Type="Edm.String" MaxLength="20" DefaultValue="NO_APPR_REQ"/>
+        <Property Name="fileContent" Type="Edm.Stream"/>
+        <NavigationProperty Name="toStatus" Type="api.v1.DocumentAPI.DocumentStatus">
+          <ReferentialConstraint Property="statusCode" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toPriority" Type="api.v1.DocumentAPI.DocumentPriorities">
+          <ReferentialConstraint Property="priorityCode" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toSource" Type="api.v1.DocumentAPI.DocumentSources">
+          <ReferentialConstraint Property="sourceCode" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toDocumentType" Type="api.v1.DocumentAPI.DocumentTypes">
+          <ReferentialConstraint Property="documentTypeCode" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toURLReferences" Type="Collection(api.v1.DocumentAPI.URLReferences)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toSolutionProcessAssignments" Type="Collection(api.v1.DocumentAPI.SolutionProcessAssignments)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toProcessHierarchyAssignments" Type="Collection(api.v1.DocumentAPI.ProcessHierarchyAssignments)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toTaskAssignments" Type="Collection(api.v1.DocumentAPI.TaskAssignments)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toLibraryAssignments" Type="Collection(api.v1.DocumentAPI.LibraryAssignments)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toTestCaseAssignments" Type="Collection(api.v1.DocumentAPI.TestCaseAssignments)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toExternalFiles" Type="Collection(api.v1.DocumentAPI.ExternalFiles)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toExternalReferences" Type="Collection(api.v1.DocumentAPI.ExternalReferences)" Partner="parent">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toState" Type="api.v1.DocumentAPI.DocumentStates">
+          <ReferentialConstraint Property="stateCode" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <NavigationProperty Name="toApproval" Type="api.v1.DocumentAPI.DocumentApprovalStates">
+          <ReferentialConstraint Property="approvalCode" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <Property Name="version" Type="Edm.Int32" DefaultValue="1"/>
+        <Property Name="isLatest" Type="Edm.Boolean" DefaultValue="true"/>
+      </EntityType>
+      <EntityType Name="URLReferences">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toURLReferences">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255" Nullable="false"/>
+        <Property Name="url" Type="Edm.String" MaxLength="1000" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="SolutionProcessAssignments">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toSolutionProcessAssignments">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="solutionProcessId" Type="Edm.String"/>
+        <Property Name="scopeId" Type="Edm.Guid"/>
+        <Property Name="solutionScenarioId" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="ProcessHierarchyAssignments">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toProcessHierarchyAssignments">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="displayId" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="TaskAssignments">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toTaskAssignments">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="id" Type="Edm.String"/>
+        <Property Name="type" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="LibraryAssignments">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toLibraryAssignments">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="libraryUuid" Type="Edm.Guid"/>
+        <Property Name="libraryType" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="TestCaseAssignments">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toTestCaseAssignments">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="testCaseUuid" Type="Edm.Guid"/>
+        <Property Name="testCaseType" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="DocumentStatus">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="code" Type="Edm.Int32" Nullable="false" DefaultValue="10"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+      </EntityType>
+      <EntityType Name="DocumentPriorities">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="code" Type="Edm.Int32" Nullable="false" DefaultValue="30"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+      </EntityType>
+      <EntityType Name="DocumentTypes">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="code" Type="Edm.String" MaxLength="40" Nullable="false" DefaultValue="NA"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+      </EntityType>
+      <EntityType Name="DocumentSources">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false" DefaultValue="MANUAL"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+      </EntityType>
+      <EntityType Name="ExternalFiles">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toExternalFiles">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="fileName" Type="Edm.String"/>
+        <Property Name="fileType" Type="Edm.String"/>
+        <Property Name="fileSize" Type="Edm.Int32"/>
+        <Property Name="fileVersion" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="DmsConfig">
+        <Property Name="destinationAvailable" Type="Edm.Boolean" DefaultValue="false"/>
+        <Property Name="repositoryId" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="ExternalReferences">
+        <Key>
+          <PropertyRef Name="uuid"/>
+        </Key>
+        <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="parent" Type="api.v1.DocumentAPI.Documents" Partner="toExternalReferences">
+          <ReferentialConstraint Property="parent_uuid" ReferencedProperty="uuid"/>
+        </NavigationProperty>
+        <Property Name="parent_uuid" Type="Edm.Guid"/>
+        <Property Name="externalReferenceId" Type="Edm.String" MaxLength="255" Nullable="false"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255" Nullable="false"/>
+        <Property Name="url" Type="Edm.String" MaxLength="1000"/>
+      </EntityType>
+      <EntityType Name="DocumentApprovalStates">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="code" Type="Edm.String" MaxLength="20" Nullable="false" DefaultValue="NO_APPR_REQ"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+      </EntityType>
+      <EntityType Name="DocumentStates">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false" DefaultValue="ACT"/>
+        <Property Name="name" Type="Edm.String" MaxLength="255"/>
+      </EntityType>
+      <ComplexType Name="api_v1_TagsAssigned">
+        <Property Name="tags" Type="Collection(Edm.String)" Nullable="true"/>
+      </ComplexType>
+      <Action Name="updateTags" IsBound="false">
+        <Parameter Name="documentUUID" Type="Edm.String" Nullable="false"/>
+        <Parameter Name="tags" Type="Collection(Edm.String)" Nullable="true"/>
+        <ReturnType Type="api.v1.DocumentAPI.api_v1_TagsAssigned"/>
+      </Action>
+      <Annotation Term="Core.SchemaVersion" String="1.0.4"/>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer">
+        <Annotation Term="Common.Label" String="SAP Cloud ALM Documents"/>
+        <Annotation Term="Core.Description" String="Allows to create, read, query and delete documents with their related entities."/>
+        <Annotation Term="Core.LongDescription" String="The Documents OData API enables you to manage documents and their related entities in SAP Cloud ALM.&lt;p>&#xA;You require the following authorization scopes to access the API:&#xA;&lt;ul>&#xA;&lt;li>calm-api.documents.read: to read document entities.&lt;/li>&#xA;&lt;li>calm-api.documents.write: to write document entities.&lt;/li>&#xA;&lt;li>calm-api.documents.delete: to delete document entities.&lt;/li>&#xA;&lt;/ul>"/>
+        <Annotation Term="Capabilities.BatchSupported" Bool="false"/>
+        <Annotation Term="Capabilities.KeyAsSegmentSupported" Bool="true"/>
+        <Annotation Term="Authorization.SecuritySchemes">
+          <Collection>
+            <Record Type="Authorization.SecurityScheme">
+              <PropertyValue Property="Authorization" String="OAuth2"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="Authorization.Authorizations">
+          <Collection>
+            <Record Type="Authorization.OAuth2ClientCredentials">
+              <PropertyValue Property="Name" String="OAuth2"/>
+              <PropertyValue Property="Description" String="Authentication via OAuth2 with client credentials flow"/>
+              <PropertyValue Property="TokenUrl" String="https://{identityzone}.authentication.{region}.hana.ondemand.com/oauth/token"/>
+              <PropertyValue Property="Scopes">
+                <Collection>
+                  <Record Type="Authorization.AuthorizationScope">
+                    <PropertyValue Property="Scope" String="calm-api.documents.read"/>
+                    <PropertyValue Property="Description" String="Read access to documents"/>
+                  </Record>
+                  <Record Type="Authorization.AuthorizationScope">
+                    <PropertyValue Property="Scope" String="calm-api.documents.write"/>
+                    <PropertyValue Property="Description" String="Write access to documents"/>
+                  </Record>
+                  <Record Type="Authorization.AuthorizationScope">
+                    <PropertyValue Property="Scope" String="calm-api.documents.delete"/>
+                    <PropertyValue Property="Description" String="Delete access to documents"/>
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.updateTags()">
+        <Annotation Term="Core.Description" String="Action to assign and unassign tags in a document"/>
+        <Annotation Term="Core.LongDescription" String="Already assigned tags remain unchanged, new tags will be assigned. Assigned tags which are not given by the action will be unassigned."/>
+        <Annotation Term="Common.Label" String="Document Headers"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.updateTags()/documentUUID">
+        <Annotation Term="Core.LongDescription" String="UUID of document"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="22222222-2222-2222-2222-222222222222"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.updateTags()/tags">
+        <Annotation Term="Core.LongDescription" String="Array of tag labels"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="Tag Label 1"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents">
+        <Annotation Term="Core.Description" String="Main entity for Documents including html content"/>
+        <Annotation Term="Core.LongDescription" String="Main entity for Documents including html content"/>
+        <Annotation Term="Common.Label" String="Document Headers"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/Documents">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of documents with its content and other properties. You can use $expand query parameter to read child entities like url references and assigned solution processes."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="true"/>
+            <PropertyValue Property="LongDescription" String="Update an existing document is supported only for attribute 'fileContent' via PUT request."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Delete a document by its UUID. This is a cascading delete operation which will also delete all child entities like url references and assignments to solution processes or process hierarchy nodes."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Create a new document with its content and other properties. You can also use deep create to assign url references and assignments to solution processes or process hierarchy nodes to the document in one single HTTP request."/>
+            <PropertyValue Property="ErrorResponses">
+              <Collection>
+                <Record Type="Capabilities.HttpResponse">
+                  <PropertyValue Property="StatusCode" String="4XX"/>
+                  <PropertyValue Property="Description" String="Bad Request - Invalid input data, e.g. missing required properties like title or projectId."/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="FilterExpressionRestrictions">
+              <Collection>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="createdAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="modifiedAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/displayId">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.LongDescription" String="ID of the document"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="7-19"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.ID}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/title">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Title}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/content">
+        <Annotation Term="Core.LongDescription" String="Html rich-text content of the document"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Common.TextFormat" EnumMember="Common.TextFormatType/html"/>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Content}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/projectId">
+        <Annotation Term="Core.LongDescription" String="UUID of assigned project"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="11111111-1111-1111-1111-111111111111"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/scopeId">
+        <Annotation Term="Core.LongDescription" String="UUID of directly assigned scope"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/statusCode">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="InProgress"/>
+              <PropertyValue Property="Value" Int="10"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="InReview"/>
+              <PropertyValue Property="Value" Int="20"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Released"/>
+              <PropertyValue Property="Value" Int="30"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/priorityCode">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="VeryHigh"/>
+              <PropertyValue Property="Value" Int="10"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="High"/>
+              <PropertyValue Property="Value" Int="20"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Medium"/>
+              <PropertyValue Property="Value" Int="30"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Low"/>
+              <PropertyValue Property="Value" Int="40"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/sourceCode">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ManuallyCreated"/>
+              <PropertyValue Property="Value" String="MANUAL"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="External"/>
+              <PropertyValue Property="Value" String="EXTERNAL"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="SapSolutionManager"/>
+              <PropertyValue Property="Value" String="SAPSOLMAN"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/documentTypeCode">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="NotAssigned"/>
+              <PropertyValue Property="Value" String="NA"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ProjectDocumentation"/>
+              <PropertyValue Property="Value" String="PJ"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="BusinessProcessDocument"/>
+              <PropertyValue Property="Value" String="BP"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="SolutionDesignDocument"/>
+              <PropertyValue Property="Value" String="SD"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="FunctionalSpecification"/>
+              <PropertyValue Property="Value" String="FU"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="TechnicalDesignDocument"/>
+              <PropertyValue Property="Value" String="TD"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ConfigurationGuide"/>
+              <PropertyValue Property="Value" String="CG"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="InterfaceSpecification"/>
+              <PropertyValue Property="Value" String="IS"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="TestDocument"/>
+              <PropertyValue Property="Value" String="TE"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="EndUserDocumentation"/>
+              <PropertyValue Property="Value" String="EU"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="TrainingDocumentation"/>
+              <PropertyValue Property="Value" String="TR"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="FactSheet"/>
+              <PropertyValue Property="Value" String="FS"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Note"/>
+              <PropertyValue Property="Value" String="NT"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="JobDocumentation"/>
+              <PropertyValue Property="Value" String="JD"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/createdAt">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="UI.DateTimeStyle" String="short"/>
+        <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+        <Annotation Term="Common.Label" String="{i18n>CreatedAt}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/modifiedAt">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="UI.DateTimeStyle" String="short"/>
+        <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+        <Annotation Term="Common.Label" String="{i18n>ChangedAt}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/tags">
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/isTemplate">
+        <Annotation Term="Common.FilterDefaultValue" Bool="false"/>
+        <Annotation Term="Common.Label" String="{i18n>Documents.IsTemplate}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/ownerId">
+        <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+        <Annotation Term="PersonalData.IsPotentiallyPersonal" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Description" String="Document owner identifier"/>
+        <Annotation Term="Core.LongDescription" String="Unique identifier of the user who owns the document"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="5a56d1e9-35a7-4b59-85b4-1f7f7dcb1d71"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Owner}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/responsibleId">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Description" String="Document responsible person identifier"/>
+        <Annotation Term="Core.LongDescription" String="Unique identifier of the user who is responsible for the document"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="1271804d-ec16-4a05-affe-e18d12a86038"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+        <Annotation Term="PersonalData.IsPotentiallyPersonal" Bool="true"/>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Responsible}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/stateCode">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Description" String="Document state code"/>
+        <Annotation Term="Core.LongDescription" String="Code representing the current state of the document"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="ACT"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Active"/>
+              <PropertyValue Property="Value" String="ACT"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="MarkedForDeletion"/>
+              <PropertyValue Property="Value" String="MDL"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/approvalCode">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Description" String="Document approval code"/>
+        <Annotation Term="Core.LongDescription" String="Code representing the current approval status of the document"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="NO_APPR_REQ"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="NoApprovalRequired"/>
+              <PropertyValue Property="Value" String="NO_APPR_REQ"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ApprovalRequired"/>
+              <PropertyValue Property="Value" String="APPR_REQUIRED"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ApprovalPending"/>
+              <PropertyValue Property="Value" String="APPR_PENDING"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Approved"/>
+              <PropertyValue Property="Value" String="APPROVED"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Rejected"/>
+              <PropertyValue Property="Value" String="REJECTED"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/fileContent">
+        <Annotation Term="Core.MediaType" Path="fileType"/>
+        <Annotation Term="Core.ContentDisposition">
+          <Record Type="Core.ContentDispositionType">
+            <PropertyValue Property="Type" String="attachment"/>
+            <PropertyValue Property="Filename" Path="fileName"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Core.LongDescription" String="Binary content of the external document file for upload, download and replace operations"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/toURLReferences">
+        <Annotation Term="Common.Label" String="{i18n>Documents.References}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/version">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.LongDescription" String="Document version number starting with 1. Is incremented with every new version."/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" Int="1"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Version}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.Documents/isLatest">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.LongDescription" String="Indicates if the document is the latest version. Only the latest version can be modified."/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.FilterDefaultValue" Bool="true"/>
+        <Annotation Term="Common.Label" String="{i18n>Documents.LatestVersion}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.URLReferences">
+        <Annotation Term="Core.Description" String="Document references (links) with URL and display name"/>
+        <Annotation Term="Core.LongDescription" String="Document references (links) with URL and display name"/>
+        <Annotation Term="Common.Label" String="URL References"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/URLReferences">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all URL references assigned to one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Delete an URL reference by its UUID."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Create a new URL reference with a target URL and display name for one document."/>
+            <PropertyValue Property="ErrorResponses">
+              <Collection>
+                <Record Type="Capabilities.HttpResponse">
+                  <PropertyValue Property="StatusCode" String="4XX"/>
+                  <PropertyValue Property="Description" String="Bad Request - Invalid input data or document does not allow changes in its current state."/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.URLReferences/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.URLReferences/name">
+        <Annotation Term="Core.LongDescription" String="Display name of the reference"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="SAP"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>References.Name}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.URLReferences/url">
+        <Annotation Term="Core.LongDescription" String="Target URL of the reference starting with http:// or https://"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="https://www.sap.com"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>References.Url}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.SolutionProcessAssignments">
+        <Annotation Term="Core.Description" String="Solution processes assigned to documents"/>
+        <Annotation Term="Core.LongDescription" String="Solution processes assigned to documents"/>
+        <Annotation Term="Common.Label" String="Solution Process Assignments"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/SolutionProcessAssignments">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all assigned assigned solution processes of one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Delete a solution process assignment by its assignment UUID."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Create a new solution process assignment for one document."/>
+            <PropertyValue Property="ErrorResponses">
+              <Collection>
+                <Record Type="Capabilities.HttpResponse">
+                  <PropertyValue Property="StatusCode" String="4XX"/>
+                  <PropertyValue Property="Description" String="Bad Request - Invalid input data or document does not allow changes in its current state."/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="FilterExpressionRestrictions">
+              <Collection>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="createdAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="modifiedAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.SolutionProcessAssignments/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.SolutionProcessAssignments/solutionProcessId">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="SP_BKP_1"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>CrossDomainAssignments.Title}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.SolutionProcessAssignments/scopeId">
+        <Annotation Term="Core.LongDescription" String="UUID of scope"/>
+        <Annotation Term="Common.Label" String="{i18n>CrossDomainAssignments.Scope}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.SolutionProcessAssignments/solutionScenarioId">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="EARL_SolS-013"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ProcessHierarchyAssignments">
+        <Annotation Term="Core.Description" String="Process hierarchy nodes assigned to documents"/>
+        <Annotation Term="Core.LongDescription" String="Process hierarchy nodes assigned to documents"/>
+        <Annotation Term="Common.Label" String="Process Hierarchy Node Assignments"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/ProcessHierarchyAssignments">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all assigned process hierarchy nodes of one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Delete a process hierarchy node assignment by its assignment UUID."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Create a new process hierarchy node assignment for one document."/>
+            <PropertyValue Property="ErrorResponses">
+              <Collection>
+                <Record Type="Capabilities.HttpResponse">
+                  <PropertyValue Property="StatusCode" String="4XX"/>
+                  <PropertyValue Property="Description" String="Bad Request - Invalid input data or document does not allow changes in its current state."/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="FilterExpressionRestrictions">
+              <Collection>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="createdAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="modifiedAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ProcessHierarchyAssignments/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ProcessHierarchyAssignments/displayId">
+        <Annotation Term="Core.LongDescription" String="ID of the process hierarchy node"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="14-2"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>CrossDomainAssignments.DisplayId}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TaskAssignments">
+        <Annotation Term="Core.Description" String="Tasks assigned to documents"/>
+        <Annotation Term="Core.LongDescription" String="Tasks assigned to documents, including requirements, defects, tasks and quality gates."/>
+        <Annotation Term="Common.Label" String="Task Assignments"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/TaskAssignments">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all assigned tasks of one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Delete a task assignment by its assignment UUID."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Create a new task assignment for one document."/>
+            <PropertyValue Property="ErrorResponses">
+              <Collection>
+                <Record Type="Capabilities.HttpResponse">
+                  <PropertyValue Property="StatusCode" String="4XX"/>
+                  <PropertyValue Property="Description" String="Bad Request - Invalid input data or document does not allow changes in its current state."/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="FilterExpressionRestrictions">
+              <Collection>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="createdAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="modifiedAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TaskAssignments/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TaskAssignments/id">
+        <Annotation Term="Core.LongDescription" String="Task identifier (uuid)"/>
+        <Annotation Term="Common.Label" String="{i18n>CrossDomainAssignments.Title}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TaskAssignments/type">
+        <Annotation Term="Core.LongDescription" String="Task type, i.e. CALMTASK (Task), CALMUS (User Story), CALMTMPL (Roadmap Task), CALMQGATE (Qaulity Gate), CALMREQU (Requirement), CALMDEF (Defect)"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.LibraryAssignments">
+        <Annotation Term="Core.Description" String="Library elements assigned to documents"/>
+        <Annotation Term="Core.LongDescription" String="Library elements assigned to documents, including Application, Configuration, Development and Interface"/>
+        <Annotation Term="Common.Label" String="Library Assignments"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/LibraryAssignments">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all assigned library elements of one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Delete a library element assignment by its assignment UUID."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Create a new library element assignment for one document."/>
+            <PropertyValue Property="ErrorResponses">
+              <Collection>
+                <Record Type="Capabilities.HttpResponse">
+                  <PropertyValue Property="StatusCode" String="4XX"/>
+                  <PropertyValue Property="Description" String="Bad Request - Invalid input data or document does not allow changes in its current state."/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="FilterExpressionRestrictions">
+              <Collection>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="createdAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="modifiedAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.LibraryAssignments/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.LibraryAssignments/libraryUuid">
+        <Annotation Term="Core.LongDescription" String="Library element identifier (uuid)"/>
+        <Annotation Term="Common.Label" String="{i18n>CrossDomainAssignments.Title}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.LibraryAssignments/libraryType">
+        <Annotation Term="Core.LongDescription" String="Library type, i.e. Application, Configuration, Interface, Development"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="Application"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TestCaseAssignments">
+        <Annotation Term="Core.Description" String="Test cases assigned to documents"/>
+        <Annotation Term="Core.LongDescription" String="Test cases assigned to documents"/>
+        <Annotation Term="Common.Label" String="Test Case Assignments"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/TestCaseAssignments">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all assigned test cases of one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Delete a test case assignment by its assignment UUID."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Create a new test case assignment for one document."/>
+            <PropertyValue Property="ErrorResponses">
+              <Collection>
+                <Record Type="Capabilities.HttpResponse">
+                  <PropertyValue Property="StatusCode" String="4XX"/>
+                  <PropertyValue Property="Description" String="Bad Request - Invalid input data or document does not allow changes in its current state."/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="FilterExpressionRestrictions">
+              <Collection>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="createdAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="modifiedAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TestCaseAssignments/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TestCaseAssignments/testCaseUuid">
+        <Annotation Term="Core.LongDescription" String="Test case identifier (uuid)"/>
+        <Annotation Term="Common.Label" String="{i18n>CrossDomainAssignments.Title}"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.TestCaseAssignments/testCaseType">
+        <Annotation Term="Core.LongDescription" String="Test case type, i.e. Manual or Automated"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="ManualTestCaseDef"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentStatus">
+        <Annotation Term="Core.Description" String="Document status values"/>
+        <Annotation Term="Core.LongDescription" String="Document status values"/>
+        <Annotation Term="Common.Label" String="Document Status"/>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/DocumentStatus">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="ReadByKeyRestrictions">
+              <Record Type="Capabilities.ReadByKeyRestrictionsType">
+                <PropertyValue Property="Readable" Bool="false"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all defined document status values"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentStatus/code">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" Int="10"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="InProgress"/>
+              <PropertyValue Property="Value" Int="10"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="InReview"/>
+              <PropertyValue Property="Value" Int="20"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Released"/>
+              <PropertyValue Property="Value" Int="30"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentStatus/name">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="In Progress"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Status}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentPriorities">
+        <Annotation Term="Core.Description" String="Document priority values"/>
+        <Annotation Term="Core.LongDescription" String="Document priority values"/>
+        <Annotation Term="Common.Label" String="Document Priorities"/>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/DocumentPriorities">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="ReadByKeyRestrictions">
+              <Record Type="Capabilities.ReadByKeyRestrictionsType">
+                <PropertyValue Property="Readable" Bool="false"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all defined document priority values"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentPriorities/code">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" Int="30"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="VeryHigh"/>
+              <PropertyValue Property="Value" Int="10"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="High"/>
+              <PropertyValue Property="Value" Int="20"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Medium"/>
+              <PropertyValue Property="Value" Int="30"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Low"/>
+              <PropertyValue Property="Value" Int="40"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentPriorities/name">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="Medium"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Priority}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentTypes">
+        <Annotation Term="Core.Description" String="Document type values"/>
+        <Annotation Term="Core.LongDescription" String="Document type values"/>
+        <Annotation Term="Common.Label" String="Document Types"/>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/DocumentTypes">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="ReadByKeyRestrictions">
+              <Record Type="Capabilities.ReadByKeyRestrictionsType">
+                <PropertyValue Property="Readable" Bool="false"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all defined documents types"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentTypes/code">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="SD"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="NotAssigned"/>
+              <PropertyValue Property="Value" String="NA"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ProjectDocumentation"/>
+              <PropertyValue Property="Value" String="PJ"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="BusinessProcessDocument"/>
+              <PropertyValue Property="Value" String="BP"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="SolutionDesignDocument"/>
+              <PropertyValue Property="Value" String="SD"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="FunctionalSpecification"/>
+              <PropertyValue Property="Value" String="FU"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="TechnicalDesignDocument"/>
+              <PropertyValue Property="Value" String="TD"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ConfigurationGuide"/>
+              <PropertyValue Property="Value" String="CG"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="InterfaceSpecification"/>
+              <PropertyValue Property="Value" String="IS"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="TestDocument"/>
+              <PropertyValue Property="Value" String="TE"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="EndUserDocumentation"/>
+              <PropertyValue Property="Value" String="EU"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="TrainingDocumentation"/>
+              <PropertyValue Property="Value" String="TR"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="FactSheet"/>
+              <PropertyValue Property="Value" String="FS"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Note"/>
+              <PropertyValue Property="Value" String="NT"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="JobDocumentation"/>
+              <PropertyValue Property="Value" String="JD"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentTypes/name">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="Solution Design Document"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.DocumentType}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentSources">
+        <Annotation Term="Core.Description" String="Document source values"/>
+        <Annotation Term="Core.LongDescription" String="Document source values"/>
+        <Annotation Term="Common.Label" String="Document Sources"/>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/DocumentSources">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="ReadByKeyRestrictions">
+              <Record Type="Capabilities.ReadByKeyRestrictionsType">
+                <PropertyValue Property="Readable" Bool="false"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all defined documents sources"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentSources/code">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="MANUAL"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ManuallyCreated"/>
+              <PropertyValue Property="Value" String="MANUAL"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="External"/>
+              <PropertyValue Property="Value" String="EXTERNAL"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="SapSolutionManager"/>
+              <PropertyValue Property="Value" String="SAPSOLMAN"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentSources/name">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="Manually Created"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Source}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalFiles">
+        <Annotation Term="Core.Description" String="External files linked to documents"/>
+        <Annotation Term="Core.LongDescription" String="External files linked to documents"/>
+        <Annotation Term="Common.Label" String="Document External Files"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/ExternalFiles">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all external files linked to one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="FilterExpressionRestrictions">
+              <Collection>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="createdAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+                <Record Type="Capabilities.FilterExpressionRestrictionType">
+                  <PropertyValue Property="Property" PropertyPath="modifiedAt"/>
+                  <PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalFiles/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalFiles/fileName">
+        <Annotation Term="Core.LongDescription" String="File name of the external document file"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="Document.pdf"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalFiles/fileType">
+        <Annotation Term="Core.LongDescription" String="MIME type of the external document file"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="application/pdf"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Core.IsMediaType" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalFiles/fileSize">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.LongDescription" String="Size of the external document file in bytes"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalFiles/fileVersion">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.LongDescription" String="Version of the external document file in SAP BTP DMS with major and minor numbers. Each file replacement will increase the major version number by 1."/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="1.0"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>ExternalFile.Version}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DmsConfig">
+        <Annotation Term="Core.Description" String="SAP BTP DMS configuration"/>
+        <Annotation Term="Core.LongDescription" String="SAP BTP DMS configuration"/>
+        <Annotation Term="Common.Label" String="SAP BTP DMS Configuration"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/DmsConfig">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="Description" String="Retrieves the SAP BTP DMS configuration"/>
+            <PropertyValue Property="LongDescription" String="Retrieve the SAP BTP DMS configuration including destination availability and repository ID."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DmsConfig/destinationAvailable">
+        <Annotation Term="Core.LongDescription" String="Indicates whether the BTP destination to SAP BTP DMS is available and properly configured"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DmsConfig/repositoryId">
+        <Annotation Term="Core.LongDescription" String="SAP BTP DMS repository ID where the external files are stored"/>
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="01234567-89ab-cdef-0123-456789abcdef"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalReferences">
+        <Annotation Term="Core.Description" String="External reference identifiers for documents"/>
+        <Annotation Term="Core.LongDescription" String="External reference identifiers for documents"/>
+        <Annotation Term="Common.Label" String="External References"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/ExternalReferences">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all external reference identifiers for one document."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalReferences/uuid">
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalReferences/externalReferenceId">
+        <Annotation Term="Core.LongDescription" String="External reference identifier, e.g. UUID from external system"/>
+        <Annotation Term="Common.Label" String="{i18n>UI.LineItem.ExternalReferenceId}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalReferences/name">
+        <Annotation Term="Core.LongDescription" String="Name of the external reference, e.g. &quot;SAP Solution Manager&quot; for selective data transfer use-case"/>
+        <Annotation Term="Common.Label" String="{i18n>UI.LineItem.ExternalReferenceName}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.ExternalReferences/url">
+        <Annotation Term="Core.LongDescription" String="URL of the external reference pointing to the external system"/>
+        <Annotation Term="Common.Label" String="{i18n>UI.LineItem.ExternalReferenceUrl}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentApprovalStates">
+        <Annotation Term="Core.Description" String="Document approval states"/>
+        <Annotation Term="Core.LongDescription" String="Document approval states"/>
+        <Annotation Term="Common.Label" String="Document Approval States"/>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/DocumentApprovalStates">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all document approval states."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentApprovalStates/code">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="NO_APPR_REQ"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="NoApprovalRequired"/>
+              <PropertyValue Property="Value" String="NO_APPR_REQ"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ApprovalRequired"/>
+              <PropertyValue Property="Value" String="APPR_REQUIRED"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="ApprovalPending"/>
+              <PropertyValue Property="Value" String="APPR_PENDING"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Approved"/>
+              <PropertyValue Property="Value" String="APPROVED"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Rejected"/>
+              <PropertyValue Property="Value" String="REJECTED"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentApprovalStates/name">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="No Approval required"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.Approval}"/>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentStates">
+        <Annotation Term="Core.Description" String="Document states"/>
+        <Annotation Term="Core.LongDescription" String="Document states"/>
+        <Annotation Term="Common.Label" String="Document States"/>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.EntityContainer/DocumentStates">
+        <Annotation Term="Capabilities.ReadRestrictions">
+          <Record Type="Capabilities.ReadRestrictionsType">
+            <PropertyValue Property="LongDescription" String="Retrieve a list of all document states."/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentStates/code">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="ACT"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Validation.AllowedValues">
+          <Collection>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="Active"/>
+              <PropertyValue Property="Value" String="ACT"/>
+            </Record>
+            <Record Type="Validation.AllowedValue">
+              <Annotation Term="Core.SymbolicName" String="MarkedForDeletion"/>
+              <PropertyValue Property="Value" String="MDL"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="api.v1.DocumentAPI.DocumentStates/name">
+        <Annotation Term="Core.Example">
+          <Record Type="Core.PrimitiveExampleValue">
+            <PropertyValue Property="Value" String="Active"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="{i18n>Documents.State}"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

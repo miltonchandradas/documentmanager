@@ -1,4 +1,7 @@
 cf login -a https://api.cf.us21.hana.ondemand.com
+cf login -a https://api.cf.eu10-004.hana.ondemand.com/
 cds bind -2 dms-integration
 cds bind -2 capabapllm-destination
 cds watch --profile hybrid
+
+cds import srv/external/CALM_SD.edmx --as cds

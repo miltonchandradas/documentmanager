@@ -6,7 +6,8 @@
     "@sap-cloud-sdk/connectivity": "^3",
     "@sap-cloud-sdk/http-client": "^3",
     "@sap/cds": "^9",
-    "express": "^4"
+    "express": "^4",
+    "@sap-cloud-sdk/resilience": "^3"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2",
@@ -19,6 +20,13 @@
     "requires": {
       "auth": {
         "kind": "dummy"
+      },
+      "CALM_SD": {
+        "kind": "odata",
+        "model": "srv/external/CALM_SD",
+        "credentials": {
+          "destination": "SAP_BUSINESS_ACCELERATOR_HUB"
+        }
       }
     }
   },
