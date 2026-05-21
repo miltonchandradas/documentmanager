@@ -72,5 +72,24 @@ Content-Type: application/json
 
 {}
 
+### List Cloud ALM Documents (via SAP Business Accelerator Hub)
+POST http://localhost:4004/odata/v4/document/listCloudALMDocuments
+Content-Type: application/json
+
+{}
+
+### Upload a Document to Cloud ALM (via SAP Business Accelerator Hub)
+POST http://localhost:4004/odata/v4/document/uploadCloudALMDocument
+Content-Type: application/json
+
+{
+  "title": "My Test Document",
+  "projectId": "11111111-1111-1111-1111-111111111111",
+  "content": "<h1>Hello</h1><p>This is a test document.</p>",
+  "documentTypeCode": "FU",
+  "statusCode": 10,
+  "priorityCode": 30
+}
+
 
 

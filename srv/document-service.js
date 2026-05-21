@@ -484,4 +484,45 @@ module.exports = async (srv) => {
             return req.error(500, `Failed to fetch CALM_SD metadata: ${err.message || 'Unknown error'}`);
         }
     });
+
+    // ─── List Cloud ALM Documents via SAP Business Accelerator Hub ───────────────
+
+    srv.on('listCloudALMDocuments', async (req) => {
+        try {
+            const CALM_SD = await cds.connect.to('CALM_SD');
+            const response = await CALM_SD.send({ method: 'GET', path: '/Documents?$top=50' });
+            return typeof response === 'string' ? response : JSON.stringify(response);
+        } catch (err) {
+            console.error('Error listing Cloud ALM documents:', err.message || err);
+            return req.error(500, `Failed to list Cloud ALM documents: ${err.message || 'Unknown error'}`);
+        }
+    });
+
+    // ─── Upload (Create) Cloud ALM Document via SAP Business Accelerator Hub ─────
+
+    srv.on('uploadCloudALMDocument', async (req) => {
+        const { title, projectId, content, documentTypeCode, statusCode, priorityCode } = req.data;
+
+        if (!title) return req.error(400, 'title is required');
+        if (!projectId) return req.error(400, 'projectId is required');
+
+        try {
+            const CALM_SD = await cds.connect.to('CALM_SD');
+            const payload = {
+                title,
+                projectId,
+                content: content || '',
+                documentTypeCode: documentTypeCode || 'NA',
+                statusCode: statusCode || 10,
+                priorityCode: priorityCode || 30,
+                sourceCode: 'MANUAL'
+            };
+
+            const response = await CALM_SD.send({ method: 'POST', path: '/Documents', data: payload });
+            return typeof response === 'string' ? response : JSON.stringify(response);
+        } catch (err) {
+            console.error('Error uploading Cloud ALM document:', err.message || err);
+            return req.error(500, `Failed to upload Cloud ALM document: ${err.message || 'Unknown error'}`);
+        }
+    });
 };
