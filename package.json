@@ -26,7 +26,8 @@
         "model": "srv/external/CALM_SD",
         "[development]": {
           "credentials": {
-            "url": "https://sandbox.api.sap.com/SAPCALM/calm-documents/v1",
+            "destination": "CALM_API",
+            "path": "/api/calm-documents/v1",
             "headers": {
               "APIKey": "Mwzfn3Azv6Vz0bUQOnEX0S9f08kQrM8V"
             }
@@ -34,8 +35,8 @@
         },
         "[production]": {
           "credentials": {
-            "destination": "SAP_BUSINESS_ACCELERATOR_HUB",
-            "path": "/SAPCALM/calm-documents/v1"
+            "destination": "CALM_API",
+            "path": "/api/calm-documents/v1"
           }
         }
       }

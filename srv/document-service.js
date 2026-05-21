@@ -476,6 +476,18 @@ module.exports = async (srv) => {
 
     srv.on('getCloudALMSandboxMetadata', async (req) => {
         try {
+            const { getDestination } = require('@sap-cloud-sdk/connectivity');
+            const resolved = await getDestination({ destinationName: 'CALM_API' });
+            const token = resolved?.authTokens?.find(t => t.value)?.value;
+            if (token) {
+                const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+                console.log('CALM_SD token scopes:', payload.scope);
+                console.log('CALM_SD token grant_type:', payload.grant_type);
+                console.log('CALM_SD token client_id:', payload.client_id);
+            } else {
+                console.log('CALM_SD: No auth token found in destination');
+            }
+
             const CALM_SD = await cds.connect.to('CALM_SD');
             const response = await CALM_SD.send({ method: 'GET', path: '/$metadata' });
             return typeof response === 'string' ? response : JSON.stringify(response);
