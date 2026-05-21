@@ -14,4 +14,5 @@ service DocumentService {
     // Cloud ALM Document creation via BTP destination
     action createCloudALMDocument(projectUUID: String, title: String, documentTypeCode: String, statusCode: String) returns String;
     action getCloudALMMetadata()                                                                                    returns String;
+    action getCloudALMSandboxMetadata()                                                                             returns String;
 }

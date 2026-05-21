@@ -66,5 +66,11 @@ Content-Type: application/json
 
 {}
 
+### Get Cloud ALM Sandbox Metadata (via SAP Business Accelerator Hub)
+POST http://localhost:4004/odata/v4/document/getCloudALMSandboxMetadata
+Content-Type: application/json
+
+{}
+
 
 

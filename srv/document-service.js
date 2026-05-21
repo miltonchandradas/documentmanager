@@ -471,4 +471,17 @@ module.exports = async (srv) => {
             return req.error(500, err.message);
         }
     });
+
+    // ─── Cloud ALM Sandbox Metadata via SAP Business Accelerator Hub ────────────
+
+    srv.on('getCloudALMSandboxMetadata', async (req) => {
+        try {
+            const CALM_SD = await cds.connect.to('CALM_SD');
+            const response = await CALM_SD.send({ method: 'GET', path: '/$metadata' });
+            return typeof response === 'string' ? response : JSON.stringify(response);
+        } catch (err) {
+            console.error('Error fetching CALM_SD sandbox metadata:', err.message || err);
+            return req.error(500, `Failed to fetch CALM_SD metadata: ${err.message || 'Unknown error'}`);
+        }
+    });
 };

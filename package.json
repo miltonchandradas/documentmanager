@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "A simple CAP project.",
   "dependencies": {
-    "@sap-cloud-sdk/connectivity": "^3",
-    "@sap-cloud-sdk/http-client": "^3",
+    "@sap-cloud-sdk/connectivity": "^4",
+    "@sap-cloud-sdk/http-client": "^4",
     "@sap/cds": "^9",
     "express": "^4",
-    "@sap-cloud-sdk/resilience": "^3"
+    "@sap-cloud-sdk/resilience": "^4"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2",
@@ -24,8 +24,19 @@
       "CALM_SD": {
         "kind": "odata",
         "model": "srv/external/CALM_SD",
-        "credentials": {
-          "destination": "SAP_BUSINESS_ACCELERATOR_HUB"
+        "[development]": {
+          "credentials": {
+            "url": "https://sandbox.api.sap.com/SAPCALM/calm-documents/v1",
+            "headers": {
+              "APIKey": "Mwzfn3Azv6Vz0bUQOnEX0S9f08kQrM8V"
+            }
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "SAP_BUSINESS_ACCELERATOR_HUB",
+            "path": "/SAPCALM/calm-documents/v1"
+          }
         }
       }
     }
