@@ -442,7 +442,9 @@ module.exports = async (srv) => {
                 throw new Error('No auth token obtained from destination.');
             }
 
-            const scopes = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).scope;
+            const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+            console.log('Cloud ALM: Full JWT payload:', JSON.stringify(payload, null, 2));
+            const scopes = payload.scope;
             console.log('Cloud ALM: Token scopes:', scopes);
 
             // Probe multiple sub-paths
